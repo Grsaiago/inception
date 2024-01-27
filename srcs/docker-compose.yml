@@ -6,13 +6,13 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: D:\estudo\inception\srcs\data\mariadb
+      device: /home/gsaiago/data/mariadb
   wordpress_db:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: D:\estudo\inception\srcs\data\wordpress
+      device: /home/gsaiago/data/wordpress
 
 networks:
   inception:
@@ -29,7 +29,7 @@ services:
     networks:
       - inception
     volumes:
-      - mariadb_db:/database
+      - mariadb_db:/var/lib/mysql
     restart: on-failure
 
   wordpress:
