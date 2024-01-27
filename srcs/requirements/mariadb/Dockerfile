@@ -15,4 +15,4 @@ COPY ./tools/create-db.sh /bin
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=2 \
     CMD mysqladmin ping -u root || exit 1
 
-ENTRYPOINT [ "sh", "/bin/create-db.sh" 
+ENTRYPOINT [ "sh", "/bin/create-db.sh" ]
