@@ -1,0 +1,65 @@
+version: "3"
+
+volumes:
+  mariadb_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: D:\estudo\inception\srcs\data\mariadb
+  wordpress_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: D:\estudo\inception\srcs\data\wordpress
+
+networks:
+  inception:
+    driver: bridge
+
+services:
+  mariadb:
+    env_file:
+      - .env
+    build:
+      context: requirements/mariadb/.
+    ports:
+      - "3306"
+    networks:
+      - inception
+    volumes:
+      - mariadb_db:/database
+    restart: on-failure
+
+  wordpress:
+    env_file:
+      - .env
+    build:
+      context: requirements/wordpress/.
+    ports:
+      - "9000"
+    networks:
+      - inception
+    volumes:
+      - wordpress_db:/wp
+    restart: on-failure
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  nginx:
+    build:
+      context: requirements/nginx/.
+    ports:
+      - "443:443"
+    networks:
+      - inception
+    volumes:
+      - wordpress_db:/wp
+    restart: on-failure
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      wordpress:
+        condition: service_started
