@@ -12,13 +12,14 @@ CONTAINERS = $(shell docker image ls -qa)
 IMAGES = $(shell docker image ls -qa)
 VOLUMES = $(shell docker volume ls -q)
 COMPOSES = $(shell docker compose ls -qa)
+HAVEDNS = $(shell cat /etc/hosts | grep "$(USER).42.fr")
 
 # UP
 ifneq ($(strip "$(COMPOSES)"), "")
-up:
+up: add-hosts
 	@echo "Nothing to be done: there's a compose running"
 else
-up:
+up: add-hosts
 	@echo "Creating the dirs if they don't exist"
 	@mkdir -p $(WPVOLUMEPATH)
 	@mkdir -p $(MDBVOLUMEPATH)
@@ -33,17 +34,17 @@ down:
 	@cd ./srcs && docker compose down
 else
 down:
-	@echo "Nothing to be done: there are no composes to down";
+	@echo "Nothing to be done: there are no composes to down"
 endif
 
 # CLEAN IMAGES 
 ifneq ($(strip "$(IMAGES)"), "")
 clean-images:
-	@echo "Removing images...";
+	@echo "Removing images..."
 	@docker image rm -f $(IMAGES)
 else
 clean-images:
-	@echo "Nothing to be done: there are no images";
+	@echo "Nothing to be done: there are no images"
 endif
 
 # CLEAN VOLUMES 
@@ -56,8 +57,19 @@ clean-volumes:
 	@sudo rm -rf /home/gsaiago/data/mariadb/*
 else
 clean-volumes:
-	@echo "Nothing to be done: there are no volumes";
+	@echo "Nothing to be done: there are no volumes"
+endif
 
+# ADD TO ETC/HOSTS
+ifneq ($(strip "$(HAVEDNS)"), "")
+add-hosts:
+	@echo "Nothing to be done: your local dns is already set up"
+else
+add-hosts:
+	@echo "Adding $(USER).42.fr to hosts"
+	@sudo echo "# This line bellow was added by the makefile" >> /etc/hosts
+	@sudo echo "127.0.0.1 gsaiago.42.fr" >> /etc/hosts
+add-hosts:
 endif
 
 fclean: down clean-images clean-volumes
