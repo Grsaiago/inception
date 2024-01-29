@@ -74,4 +74,16 @@ endif
 
 fclean: down clean-images clean-volumes
 
+info:
+	@echo "Here's the info for $(USER)'s inception"
+	@echo "---- Compose info ----"
+	@docker compose ls -a
+	@echo "---- Image info ----"
+	@docker image ls -a
+	@echo "---- Container info ----"
+	@docker container ls -a
+	@echo "---- Volume info ----"
+	@docker volume ls
+	@echo "---- /etc/hosts info ----"
+	@cat /etc/hosts
 .PHONY: up down clean-images clean-volumes fclean
